@@ -1,0 +1,35 @@
+name: Build KAMO 1.21.11
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+
+      - name: Build mod
+        run: |
+          unzip -q KeyboardAndMouseOverlay_1.21.11_source.zip -d port
+          cd port/kamo_port_1_21_11
+          gradle build
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: KAMO-1.21.11
+          path: port/kamo_port_1_21_11/build/libs/*.jar
